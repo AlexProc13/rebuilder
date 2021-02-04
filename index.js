@@ -9,15 +9,25 @@ app.use(express.json());
 
 app.get('/rebuild', (request, response) => {
     let platform = request.query.platform;
-    let dir = `/var/www/${platform}`;
-    if (platform != 'undefined' && fs.existsSync(dir)) {
-        let command = `cd ${dir} && npm run build`;
-        exec(command, function callback(error, stdout, stderr) {
-            // result
-            console.log(error);
-        });
+    if (platform == 'undefined') {
+        return response.json({status: false})
     }
-    response.send('Ok');
+
+    platform = platform.replace(/[^a-z0-9.]/gi, '');
+    let dir = `/var/www/${platform}`;
+
+    if (!fs.existsSync(dir)) {
+        return response.json({status: false})
+    }
+
+    let command = `cd ${dir} && npm run build`;
+    console.log(command);
+    exec(command, function callback(error, stdout, stderr) {
+        // result
+        console.log(error);
+    });
+
+    return response.json({status: true})
 });
 
 app.listen(PORT, () => console.log(`Server currently running on port ${PORT}`));
