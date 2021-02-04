@@ -10,7 +10,6 @@ app.use(express.json());
 app.get('/rebuild', (request, response) => {
   let platform = request.query.platform;
   //let dir = `/var/www/${platform}`;
-  let dir = `/home/user/Desktop/files/projects/front.nuxbet`;
   let command = `cd ${dir} && npm run build`;
 
   if (fs.existsSync(dir)) {
