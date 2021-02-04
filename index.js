@@ -16,7 +16,7 @@ app.get('/rebuild', (request, response) => {
     platform = platform.replace(/[^a-z0-9.]/gi, '');
     let dir = `/var/www/${platform}`;
     console.log(platform);
-    if (platform == null && !fs.existsSync(dir)) {
+    if (platform == '' && !fs.existsSync(dir)) {
         return response.json({status: false})
     }
 
