@@ -8,20 +8,8 @@ const PORT = 7777;
 app.use(express.json());
 
 app.get('/rebuild', (request, response) => {
-    let platform = request.query.platform;
-    if (platform == 'undefined') {
-        return response.json({status: false})
-    }
+    let command = getCommand(request);
 
-    platform = platform.replace(/[^a-z0-9.]/gi, '');
-    let dir = `/var/www/${platform}`;
-    console.log(platform);
-    if (platform == '' || !fs.existsSync(dir)) {
-        return response.json({status: false})
-    }
-
-    let command = `cd ${dir} && npm run build`;
-    console.log(command);
     exec(command, function callback(error, stdout, stderr) {
         // result
         console.log(error);
@@ -29,5 +17,47 @@ app.get('/rebuild', (request, response) => {
 
     return response.json({status: true})
 });
+
+app.get('/asyncRebuild', async (request, response) => {
+    let command = getCommand(request);
+
+    try {
+        let result = await execPromise(command);
+        console.log(result);
+        return response.json({status: true, msg: result});
+    } catch (e) {
+        return response.json({status: false});
+    }
+});
+
+function execPromise(command) {
+    return new Promise(function(resolve, reject) {
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+
+            resolve(stdout.trim());
+        });
+    });
+}
+
+function getCommand(request) {
+    let platform = request.query.platform;
+    if (platform == 'undefined') {
+        return response.json({status: false})
+    }
+
+    const dirPath = '/home/user/files/projects/';
+    platform = platform.replace(/[^a-z0-9.]/gi, '');
+    let dir = dirPath + `${platform}`;
+    console.log(platform);
+    if (platform == '' || !fs.existsSync(dir)) {
+        return response.json({status: false})
+    }
+
+    return  command = `cd ${dir} && npm run build`;
+}
 
 app.listen(PORT, () => console.log(`Server currently running on port ${PORT}`));
