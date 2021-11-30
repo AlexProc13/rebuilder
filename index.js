@@ -49,7 +49,7 @@ function getCommand(request) {
         return response.json({status: false})
     }
 
-    const dirPath = '/home/user/files/projects/';
+    const dirPath = '/var/www/';
     platform = platform.replace(/[^a-z0-9.]/gi, '');
     let dir = dirPath + `${platform}`;
     console.log(platform);
