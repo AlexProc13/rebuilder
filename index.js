@@ -1,9 +1,10 @@
 const express = require('express');
 const exec = require('child_process').exec;
 const fs = require("fs");
-
 const app = express();
-const PORT = 7777;
+require('dotenv').config();
+const PORT = process.env.SERVER_PORT || 7775;
+const projectsPath = process.env.PROJECTS_PATH || '/var/www/';
 
 app.use(express.json());
 
@@ -18,7 +19,7 @@ app.get('/rebuild', (request, response) => {
     return response.json({status: true})
 });
 
-app.get('/asyncRebuild', async (request, response) => {
+app.get('/syncRebuild', async (request, response) => {
     let command = getCommand(request);
 
     try {
@@ -26,6 +27,7 @@ app.get('/asyncRebuild', async (request, response) => {
         console.log(result);
         return response.json({status: true, msg: result});
     } catch (e) {
+        console.log(e);
         return response.json({status: false});
     }
 });
@@ -49,12 +51,13 @@ function getCommand(request) {
         return response.json({status: false})
     }
 
-    const dirPath = '/var/www/';
+    const dirPath = projectsPath;
+    console.log(dirPath);
     platform = platform.replace(/[^a-z0-9.]/gi, '');
     let dir = dirPath + `${platform}`;
     console.log(platform);
     if (platform == '' || !fs.existsSync(dir)) {
-        return response.json({status: false})
+        throw "wrong path";
     }
 
     return  command = `cd ${dir} && npm run build`;
