@@ -20,9 +20,8 @@ app.get('/rebuild', (request, response) => {
 });
 
 app.get('/syncRebuild', async (request, response) => {
-    let command = getCommand(request);
-
     try {
+        let command = getCommand(request);
         let result = await execPromise(command);
         console.log(result);
         return response.json({status: true, msg: result});
