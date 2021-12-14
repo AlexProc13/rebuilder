@@ -48,6 +48,7 @@ function execPromise(command) {
 function getCommand(request) {
     let platform = request.query.platform;
     if (platform == 'undefined') {
+        throw "wrong path";
         return response.json({status: false})
     }
 
