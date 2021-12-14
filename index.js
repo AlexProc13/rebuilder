@@ -52,7 +52,7 @@ function getCommand(request) {
         throw "wrong path";
         return response.json({status: false})
     }
-
+    console.log(platform);
     const dirPath = projectsPath;
     console.log(dirPath);
     platform = platform.replace(/[^a-z0-9.]/gi, '');
